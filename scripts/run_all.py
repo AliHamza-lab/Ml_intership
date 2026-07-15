@@ -17,7 +17,10 @@ STEPS = [
 
 
 def run_step(index: int, script: str, label: str) -> None:
-    print(f"\n{'=' * 70}\n▶ Step {index}/{len(STEPS)} — {label}\n{'=' * 70}", flush=True)
+    try:
+        print(f"\n{'=' * 70}\n▶ Step {index}/{len(STEPS)} — {label}\n{'=' * 70}", flush=True)
+    except UnicodeEncodeError:
+        print(f"\n{'=' * 70}\n> Step {index}/{len(STEPS)} - {label}\n{'=' * 70}", flush=True)
     subprocess.run([sys.executable, str(ROOT / "scripts" / script)], cwd=ROOT, check=True)
 
 
