@@ -78,11 +78,17 @@
         .hero {
             background: var(--hero-bg);
             color: #ffffff;
-            padding: 80px 24px;
+            padding: 48px 16px;
             text-align: center;
             position: relative;
             overflow: hidden;
             box-shadow: var(--shadow);
+        }
+
+        @media (min-width: 768px) {
+            .hero {
+                padding: 80px 24px;
+            }
         }
 
         .hero::before {
@@ -120,14 +126,26 @@
         .hero h1 {
             font-family: 'Outfit', sans-serif;
             font-weight: 800;
-            font-size: 2.5rem;
+            font-size: 1.8rem;
             line-height: 1.25;
             margin-bottom: 24px;
             letter-spacing: -0.02em;
             text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
 
+        @media (min-width: 480px) {
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+        }
+
         @media (min-width: 768px) {
+            .hero h1 {
+                font-size: 2.8rem;
+            }
+        }
+
+        @media (min-width: 1024px) {
             .hero h1 {
                 font-size: 3.2rem;
             }
@@ -243,10 +261,17 @@
         .paper-section {
             background-color: var(--bg-secondary);
             border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 32px;
+            border-radius: 12px;
+            padding: 20px 16px;
             box-shadow: var(--shadow);
             scroll-margin-top: 40px;
+        }
+
+        @media (min-width: 480px) {
+            .paper-section {
+                border-radius: 16px;
+                padding: 32px;
+            }
         }
 
         @media (min-width: 768px) {
@@ -622,6 +647,95 @@
             transform: translateY(-2px);
         }
 
+        #mobile-toc-toggle {
+            display: none;
+        }
+
+        @media (max-width: 1023px) {
+            #mobile-toc-toggle {
+                display: flex;
+            }
+        }
+
+        /* Mobile Navigation Overlay */
+        .mobile-nav-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+        }
+
+        .mobile-nav-card {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            width: 90%;
+            max-width: 360px;
+            padding: 24px;
+            box-shadow: var(--shadow-lg);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .mobile-nav-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 12px;
+        }
+
+        .mobile-nav-header h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.8rem;
+            cursor: pointer;
+            color: var(--text-secondary);
+            line-height: 1;
+        }
+
+        .close-btn:hover {
+            color: var(--accent);
+        }
+
+        .mobile-nav-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .mobile-nav-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 1.05rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: 0.2s ease;
+        }
+
+        .mobile-nav-link:hover, .mobile-nav-link.active {
+            color: var(--accent);
+            background-color: rgba(var(--accent-rgb), 0.08);
+        }
+
         /* Footer */
         footer {
             background-color: var(--bg-secondary);
@@ -696,6 +810,9 @@
 
     <!-- Theme Toggle Floating Control -->
     <div class="controls">
+        <button class="control-btn" id="mobile-toc-toggle" title="Table of Contents">
+            <i class="fas fa-list-ul"></i>
+        </button>
         <button class="control-btn" id="theme-toggle" title="Toggle Theme">
             <i class="fas fa-moon"></i>
         </button>
@@ -1311,6 +1428,57 @@ python scripts/run_all.py</code></pre>
                 observer.observe(section);
             });
         });
+
+        // Mobile Navigation Dialog
+        const mobileTocToggle = document.getElementById('mobile-toc-toggle');
+        const mobileNavOverlay = document.getElementById('mobile-nav-overlay');
+        const mobileNavClose = document.getElementById('mobile-nav-close');
+        const mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
+
+        if (mobileTocToggle && mobileNavOverlay && mobileNavClose) {
+            mobileTocToggle.addEventListener('click', () => {
+                mobileNavOverlay.style.display = 'flex';
+            });
+
+            mobileNavClose.addEventListener('click', () => {
+                mobileNavOverlay.style.display = 'none';
+            });
+
+            // Close when clicking outside card
+            mobileNavOverlay.addEventListener('click', (e) => {
+                if (e.target === mobileNavOverlay) {
+                    mobileNavOverlay.style.display = 'none';
+                }
+            });
+
+            // Close when clicking link
+            mobileNavLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    mobileNavOverlay.style.display = 'none';
+                });
+            });
+        }
     </script>
+
+    <!-- Mobile Navigation Overlay HTML -->
+    <div class="mobile-nav-overlay" id="mobile-nav-overlay">
+        <div class="mobile-nav-card">
+            <div class="mobile-nav-header">
+                <h3>Outline</h3>
+                <button class="close-btn" id="mobile-nav-close">&times;</button>
+            </div>
+            <ul class="mobile-nav-list">
+                <li><a href="#abstract" class="mobile-nav-link"><i class="fas fa-file-alt"></i> Abstract</a></li>
+                <li><a href="#introduction" class="mobile-nav-link"><i class="fas fa-info-circle"></i> Introduction</a></li>
+                <li><a href="#data" class="mobile-nav-link"><i class="fas fa-database"></i> Data & Safety</a></li>
+                <li><a href="#methodology" class="mobile-nav-link"><i class="fas fa-flask"></i> Methodology</a></li>
+                <li><a href="#results" class="mobile-nav-link"><i class="fas fa-chart-line"></i> Results</a></li>
+                <li><a href="#limitations" class="mobile-nav-link"><i class="fas fa-exclamation-triangle"></i> Limitations</a></li>
+                <li><a href="#recommendations" class="mobile-nav-link"><i class="fas fa-clipboard-list"></i> Recommendations</a></li>
+                <li><a href="#reproducibility" class="mobile-nav-link"><i class="fas fa-sync"></i> Reproducibility</a></li>
+                <li><a href="#acknowledgments" class="mobile-nav-link"><i class="fas fa-award"></i> Credits</a></li>
+            </ul>
+        </div>
+    </div>
 </body>
 </html>
